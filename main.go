@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -8,23 +9,32 @@ import (
 	"strings"
 )
 
-const lexicon = "sowpods.txt"
+var lexiconFile string
+var verbose bool
 
 func init() {
-	if len(os.Args) < 2 {
+	flag.Usage = func() {
+		usage()
+	}
+
+	flag.StringVar(&lexiconFile, "f", "sowpods.txt", "word list lexicon file")
+	flag.BoolVar(&verbose, "v", false, "verbose output")
+
+	flag.Parse()
+	if len(flag.Args()) < 1 {
 		usage()
 		os.Exit(1)
 	}
 }
 
 func main() {
-	rack := os.Args[1]
-	fmt.Printf("rack: %q\n", rack)
-
-	wordList, err := loadWordList(lexicon)
+	wordList, err := loadWordList(lexiconFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	rack := flag.Arg(0)
+	debug("letter rack:\t%s\n", rack)
 
 	var matches []*match
 	for _, word := range wordList {
@@ -52,6 +62,15 @@ func canMakeWord(word, availChars string) bool {
 }
 
 func usage() {
-	msg := "Usage:  %s [options] <letter rack>\n"
+	msg := "Usage:  %s [options] <letter rack>\nOptions:\n"
 	fmt.Fprintf(os.Stderr, msg, os.Args[0])
+	flag.PrintDefaults()
+}
+
+func debug(format string, args ...interface{}) error {
+	if verbose {
+		_, err := fmt.Fprintf(os.Stderr, format, args...)
+		return err
+	}
+	return nil
 }

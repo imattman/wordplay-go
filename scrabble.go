@@ -51,6 +51,8 @@ func (m byScore) Less(i, j int) bool {
 
 // loads and converts to lower case words from a text file
 func loadWordList(wordFile string) ([]string, error) {
+	debug("lexicon file:\t%s\n", wordFile)
+
 	file, err := os.Open(wordFile)
 
 	if err != nil {
