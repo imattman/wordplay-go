@@ -1,8 +1,7 @@
-package main
+package wp
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 )
@@ -15,7 +14,7 @@ var letterScore = map[rune]int{
 	'y': 4, 'z': 10,
 }
 
-func calcScore(word string) int {
+func CalcScore(word string) int {
 	var total int
 	for _, c := range word {
 		total += letterScore[c]
@@ -24,35 +23,8 @@ func calcScore(word string) int {
 	return total
 }
 
-// Match represents a word match and its scrabble score
-type match struct {
-	word  string
-	score int
-}
-
-func (m *match) String() string {
-	return fmt.Sprintf("%d\t%s", m.score, m.word)
-}
-
-// byScore implements sort.Interface for []*match based on word score
-type byScore []*match
-
-func (m byScore) Len() int {
-	return len(m)
-}
-
-func (m byScore) Swap(i, j int) {
-	m[i], m[j] = m[j], m[i]
-}
-
-func (m byScore) Less(i, j int) bool {
-	return m[i].score < m[j].score
-}
-
-// loads and converts to lower case words from a text file
-func loadWordList(wordFile string) ([]string, error) {
-	debug("lexicon file:\t%s\n", wordFile)
-
+// LoadWordList loads words from a text file and converts to lower case
+func LoadWordList(wordFile string) ([]string, error) {
 	file, err := os.Open(wordFile)
 
 	if err != nil {

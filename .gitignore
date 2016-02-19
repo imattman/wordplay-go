@@ -1,12 +1,16 @@
+# IntelliJ
+.idea
+*.iml
+
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a
 *.so
 
+
 # Folders
 _obj
 _test
-.idea
 
 # Architecture specific extensions/prefixes
 *.[568vq]
