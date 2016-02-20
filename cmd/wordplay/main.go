@@ -19,7 +19,7 @@ func init() {
 		usage()
 	}
 
-	flag.StringVar(&lexiconFile, "f", "sowpods.txt", "word list lexicon file")
+	flag.StringVar(&lexiconFile, "f", "resources/sowpods.txt", "word list lexicon file")
 	flag.IntVar(&limit, "n", 10, "limit match count")
 	flag.BoolVar(&verbose, "v", false, "verbose output")
 }
@@ -33,19 +33,18 @@ func main() {
 
 	debug("lexicon:\t%s\n", lexiconFile)
 
-	wordList, err := wp.LoadWordList(lexiconFile)
+	lexicon, err := wp.LexiconFromFile(lexiconFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	rack := flag.Arg(0)
+	rack := wp.NewStringRack(flag.Arg(0))
 	debug("letter rack:\t%s\n", rack)
 
-	var matches []*wp.Match
-	for _, word := range wordList {
-		if wp.CanMakeWord(word, rack) {
-			matches = append(matches, &wp.Match{word, wp.CalcScore(word)})
-		}
+	mxr := wp.NewSerialMatcher()
+	matches, err := mxr.Matches(lexicon, rack)
+	if err != nil {
+		log.Fatal(err)
 	}
 	debug("matches:\t%d\n", len(matches))
 
