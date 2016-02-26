@@ -56,7 +56,8 @@ func (r Rack) String() string {
 
 // NewRack contructs a character rack.
 func NewRack(chars []rune) Rack {
-	return Rack{chars, groupByRune(chars)}
+	lcChars := []rune(strings.ToLower(string(chars)))
+	return Rack{lcChars, groupByRune(lcChars)}
 }
 
 type runeCounts map[rune]int

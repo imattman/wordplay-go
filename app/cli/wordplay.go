@@ -20,6 +20,7 @@ var verbose bool
 func Execute() {
 	app = cli.NewApp()
 	app.Name = appName
+	app.Version = "0.8.0 (funkychicken)"
 	app.Usage = "Look up valid words based on a 'Rack' of playable characters"
 	// app.UsageText = "this is the UsageText"
 
@@ -47,7 +48,6 @@ func Execute() {
 
 func registerCommands() {
 	app.Commands = []cli.Command{
-		cmdFoo(),
 		cmdCliRack(),
 		cmdWeb(),
 	}

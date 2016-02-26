@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"strings"
 
 	"github.com/codegangsta/cli"
@@ -42,8 +41,10 @@ func actionCliRack(c *cli.Context) {
 		log.Fatal(err)
 	}
 
-	mxr := lex.NewSerialMatcher(lexicon)
+	mxr := lex.NewSerialMatcher(lexicon, lex.NoopFilter)
+	// mxr := lex.NewConcurrentMatcher(lexicon, lex.PrePartitionByFirstChar(lexicon))
 	pipe, err := lex.NewPipeline(mxr)
+	pipe.AddProcessor(lex.NewLimitProcessor(limit))
 	rack := lex.NewRack(rackChars)
 
 	debug("lexicon:\t%s (%d words)\n", lexiconFile, len(lexicon))
@@ -51,12 +52,6 @@ func actionCliRack(c *cli.Context) {
 
 	matches, err := pipe.Process(rack)
 	debug("matches:\t%d\n", len(matches))
-
-	sort.Sort(sort.Reverse(lex.ByScore(matches)))
-
-	if (len(matches) < limit) || (limit <= 0) {
-		limit = len(matches)
-	}
 
 	for _, m := range matches[:limit] {
 		fmt.Println(m)

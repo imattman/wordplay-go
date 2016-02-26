@@ -1,5 +1,17 @@
 package lex
 
+import "sort"
+
+// SortByScoreProcessor is a MatchProcessor that sorts word matches by their
+// score in descending order.
+var SortByScoreProcessor = MatchProcessorFunc(sortByScore)
+
+func sortByScore(ms []*Match) ([]*Match, error) {
+	sort.Sort(sort.Reverse(ByScore(ms)))
+
+	return ms, nil
+}
+
 // RuneSlice implements sort.Interface for a slice of runes.
 type RuneSlice []rune
 

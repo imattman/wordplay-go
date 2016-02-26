@@ -1,36 +1,40 @@
 package lex
 
-// type ScoringFunc func(word string) int
-// type PartitioningFunc func(lex Lexicon, rack Rack) []Lexicon
-
-// SerialMatcher is a LexiconMatcher that finds matches using minimal concurrency.
+// SerialMatcher is a LexiconMatcher that finds word matches using minimal concurrency.
 type SerialMatcher struct {
-	lexicon Lexicon
+	Lex  Lexicon
+	Filt PartitioningFilter
 }
 
 // NewSerialMatcher constructs a SerialMatcher.
-func NewSerialMatcher(lex Lexicon) *SerialMatcher {
-	return &SerialMatcher{lex}
+func NewSerialMatcher(lex Lexicon, filter PartitioningFilter) *SerialMatcher {
+	return &SerialMatcher{
+		Lex:  lex,
+		Filt: filter,
+	}
 }
 
 // Lexicon is the underlying lexicon of words available to be matched.
 func (sm *SerialMatcher) Lexicon() Lexicon {
-	return sm.lexicon
+	return sm.Lex
 }
 
-// Matches the given character rack against words in the underlying Lexicon,
-// returning Matches on an output channel.
-func (sm *SerialMatcher) Matches(r Rack) <-chan *Match {
-	matches := make(chan *Match)
+// Matches the given character rack against words in the underlying Lexicon.
+func (sm *SerialMatcher) Matches(rack Rack) ([]*Match, error) {
+	var matches []*Match
 
-	go func() {
-		for _, w := range sm.lexicon {
-			if r.ContainsAll(w.Stats()) {
-				matches <- &Match{Word: w}
+	lexs, err := sm.Filt.Filter(sm.Lex, rack)
+	if err != nil {
+		return matches, err
+	}
+
+	for _, l := range lexs {
+		for _, w := range l {
+			if rack.ContainsAll(w.Stats()) {
+				matches = append(matches, &Match{Word: w})
 			}
 		}
-		close(matches)
-	}()
+	}
 
-	return matches
+	return matches, nil
 }

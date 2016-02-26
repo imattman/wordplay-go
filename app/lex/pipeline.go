@@ -1,49 +1,48 @@
 package lex
 
-import (
-	"sort"
-	"sync"
-)
-
 // MatchPipeline is the assembly for matching, scoring, and finishing functionality.
 type MatchPipeline struct {
-	Matcher     LexiconMatcher
-	ScoringFunc func(w Word) int
-	// Finishers []
+	Matcher    LexiconMatcher
+	Processors []MatchProcessor
 }
 
 // NewPipeline constructs a MatchPipeline.
 func NewPipeline(matcher LexiconMatcher, opt ...func(mp *MatchPipeline)) (*MatchPipeline, error) {
-	mp := MatchPipeline{
-		Matcher:     matcher,
-		ScoringFunc: defaultScoringFunc,
+	pipe := MatchPipeline{
+		Matcher: matcher,
+		Processors: []MatchProcessor{
+			ScrabbleScoreProcessor,
+			SortByScoreProcessor,
+		},
 	}
 
 	// allow option functions to make modifications
 	for _, f := range opt {
-		f(&mp)
+		f(&pipe)
 	}
 
-	return &mp, nil
+	return &pipe, nil
+}
+
+// AddProcessor is a convenience method for appending a MatchProcessor to the
+// existing chain of processors.
+func (mp *MatchPipeline) AddProcessor(proc MatchProcessor) {
+	mp.Processors = append(mp.Processors, proc)
 }
 
 // Process applies the stages of the pipeline to a character rack argument.
-func (mp *MatchPipeline) Process(r Rack) ([]*Match, error) {
-	mchan := mp.Matcher.Matches(r)
-	var matches []*Match
-	var wg sync.WaitGroup
+func (mp *MatchPipeline) Process(rack Rack) ([]*Match, error) {
+	matches, err := mp.Matcher.Matches(rack)
+	if err != nil {
+		return matches, err
+	}
 
-	wg.Add(1)
-	go func() {
-		for m := range mchan {
-			m.Score = mp.ScoringFunc(m.Word)
-			matches = append(matches, m)
+	for _, proc := range mp.Processors {
+		matches, err = proc.Process(matches)
+		if err != nil {
+			return matches, err
 		}
-		wg.Done()
-	}()
-
-	wg.Wait()
-	sort.Sort(sort.Reverse(ByScore(matches)))
+	}
 
 	return matches, nil
 
