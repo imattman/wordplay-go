@@ -6,8 +6,8 @@ import (
 
 // Match represents a word match and score.
 type Match struct {
-	Word  Word
-	Score int
+	Word  Word `json:"word"`
+	Score int  `json:"score"`
 }
 
 func (m *Match) String() string {

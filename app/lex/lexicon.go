@@ -54,6 +54,16 @@ func (r Rack) String() string {
 	return string(c)
 }
 
+// StringSlice returns a Rack as a slice of 1-character strings.
+func (r Rack) StringSlice() []string {
+	ss := make([]string, 0, len(r.chars))
+	for _, r := range r.chars {
+		ss = append(ss, string(r))
+	}
+
+	return ss
+}
+
 // NewRack contructs a character rack.
 func NewRack(chars []rune) Rack {
 	lcChars := []rune(strings.ToLower(string(chars)))
