@@ -53,7 +53,7 @@ func actionCliRack(c *cli.Context) {
 	matches, err := pipe.Process(rack)
 	debug("matches:\t%d\n", len(matches))
 
-	for _, m := range matches[:limit] {
+	for _, m := range matches {
 		fmt.Println(m)
 	}
 }
