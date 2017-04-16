@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/codegangsta/cli"
-	"github.com/imattman/wordplay/app/lex"
-	"github.com/imattman/wordplay/app/web"
+	"github.com/imattman/wordplay-go/app/lex"
+	"github.com/imattman/wordplay-go/app/web"
 )
 
 var port int
@@ -35,7 +35,7 @@ func actionWeb(c *cli.Context) {
 		log.Fatal(err)
 	}
 
-	// mxr := lex.NewSerialMatcher(lexicon, lex.NoopFilter)
+	//mxr := lex.NewSerialMatcher(lexicon, lex.NoopFilter)
 	mxr := lex.NewConcurrentMatcher(lexicon, lex.PrePartitionByFirstChar(lexicon))
 	pipeline, err := lex.NewPipeline(mxr)
 	if err != nil {

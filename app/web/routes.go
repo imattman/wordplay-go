@@ -5,7 +5,7 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/go-zoo/bone"
-	"github.com/imattman/wordplay/app/lex"
+	"github.com/imattman/wordplay-go/app/lex"
 )
 
 // Serve starts the HTTP server.

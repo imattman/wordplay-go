@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
-	"github.com/imattman/wordplay/app/lex"
+	"github.com/imattman/wordplay-go/app/lex"
 )
 
 var limit int

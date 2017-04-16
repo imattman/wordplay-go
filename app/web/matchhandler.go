@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-zoo/bone"
-	"github.com/imattman/wordplay/app/lex"
+	"github.com/imattman/wordplay-go/app/lex"
 )
 
 const rackParam = "rack"
@@ -34,5 +34,6 @@ func (h matchesHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	log.Println("matches:", len(ms))
 
 	result := matchResult{Rack: rack.StringSlice(), Matches: ms}
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(&result)
 }
