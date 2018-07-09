@@ -1,3 +1,10 @@
+# Produced binaries
+/randword
+/wordplay
+/wordstats
+
+
+
 # IntelliJ
 .idea
 *.iml
