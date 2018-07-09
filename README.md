@@ -1,7 +1,21 @@
-# Go Wordplay
-Go implementation of scrabble tool, used as a learning project.
+# Wordplay
 
-Credit goes to [Jessica McKellar][jesstess] for the original [Python version][python_version].
+Go implementation of wordplay scrabble tool.
+
+# Project Layout
+
+
+
+To Add:
+/web/static
+/web/template
+/api    json schema, swagger
+
+
+
+# Prior Work
+
+Project inspired by [Python][python_version] app written by [Jessica McKellar][jesstess].
 
 
 [jesstess]: https://github.com/jesstess
