@@ -2,6 +2,23 @@
 
 Go implementation of wordplay scrabble tool.
 
+## Build and Test
+
+Build main app `wordplay`:
+```
+go build ./cmd/wordplay
+```
+
+Run tests:
+```
+go test -v ./pkg/...
+```
+
+Build tools:
+```
+go build ./tools/...
+```
+
 # Project Layout
 
 
