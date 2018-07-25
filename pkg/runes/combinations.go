@@ -2,6 +2,8 @@ package runes
 
 // Combinations generates combinations from a source slice of runes.
 // Each combination is represented as a slice of runes.
+// Repeated runes should be sequential to prevent returning duplicate combinations,
+// though the source rune slice does not need to be fully ordered.
 // The null set (empty slice) is omitted from the results.
 func Combinations(src []rune) [][]rune {
 	// Start with a single entry representing the null set that provides an
