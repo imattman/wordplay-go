@@ -38,6 +38,21 @@ func (ms Multiset) ContainsAll(other Multiset) bool {
 	return true
 }
 
+// Equals tests for equality with another Multiset.
+// Runes and respective counts must match for the Multisets to be considered equal.
+func (ms Multiset) Equals(other Multiset) bool {
+	if len(ms.counts) != len(other.counts) {
+		return false
+	}
+	for r, otherCnt := range other.counts {
+		// verify this rune is contained and has at least the same count
+		if cnt, ok := ms.counts[r]; !ok || (cnt != otherCnt) {
+			return false
+		}
+	}
+	return true
+}
+
 // Slice returns the slice representation of the multiset.
 func (ms Multiset) Slice() []rune {
 	rs := countsToSlice(ms.counts)

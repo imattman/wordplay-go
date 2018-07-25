@@ -78,6 +78,34 @@ func TestMultiset_ContainsAll(t *testing.T) {
 	}
 }
 
+func TestMultiset_Equals(t *testing.T) {
+	tests := []struct {
+		name  string
+		first string
+		other string
+		want  bool
+	}{
+		{"compare empty", "", "", true},
+		{"compare same", "aaa", "aaa", true},
+		{"a vs empty", "a", "", false},
+		{"empty vs a", "", "a", false},
+		{"superset letters", "aabbccd", "aabbcc", false},
+		{"superset count", "aaabbb", "aabb", false},
+		{"insufficient letters", "abc", "abcz", false},
+		{"insufficient count", "ab", "aabb", false},
+		{"different order", "aabbccddee", "abcdeabcde", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ms := NewMultiset([]rune(tt.first))
+			other := NewMultiset([]rune(tt.other))
+			if got := ms.Equals(other); got != tt.want {
+				t.Errorf("Multiset.Equals() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestMultiset_String(t *testing.T) {
 	tests := []struct {
 		name   string
