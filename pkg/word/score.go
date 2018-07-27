@@ -4,6 +4,25 @@ import (
 	"github.com/imattman/wordplay-go/pkg/runes"
 )
 
+// ScoredWord groups a Word with a score.
+type ScoredWord struct {
+	Word  Word
+	Score int
+}
+
+// ScoredWords is a collection of ScoredWord with sorting methods.
+type ScoredWords []ScoredWord
+
+func (sw ScoredWords) Len() int      { return len(sw) }
+func (sw ScoredWords) Swap(i, j int) { sw[i], sw[j] = sw[j], sw[i] }
+func (sw ScoredWords) Less(i, j int) bool {
+	// score sorted with higher values ealier
+	if sw[i].Score != sw[j].Score {
+		return sw[i].Score > sw[j].Score
+	}
+	return sw[i].Word < sw[j].Word
+}
+
 // Scorer defines the interface for scoring Words and groups of runes.
 type Scorer interface {
 	Score(rs runes.Multiset) int
