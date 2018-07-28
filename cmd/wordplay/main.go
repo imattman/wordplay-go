@@ -20,7 +20,7 @@ func main() {
 		lexiconFile string
 		resultLimit int
 	)
-	flag.StringVar(&lexiconFile, "f", "resources/sowpods.txt", "word lexicon file")
+	flag.StringVar(&lexiconFile, "f", "", "word lexicon file")
 	flag.IntVar(&resultLimit, "n", 10, "match result limit")
 	flag.Parse()
 
@@ -28,11 +28,16 @@ func main() {
 		fatalf("at least one letter must be supplied for letter rack")
 	}
 
-	lex, err := loadLexicon(lexiconFile)
-	if err != nil {
-		fatalf("Error loading lexicon: %v", err)
+	var wordlist = word.DefaultWordList
+	if lexiconFile != "" {
+		var err error
+		wordlist, err = word.LoadFile(lexiconFile)
+		if err != nil {
+			fatalf("Error loading lexicon: %v", err)
+		}
 	}
 
+	lex := word.NewLexicon(wordlist)
 	chars := []rune(flag.Arg(0))
 	rack := runes.NewMultiset(chars)
 	matcher := word.NewFullScanMatcher(lex)
