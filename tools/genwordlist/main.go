@@ -1,16 +1,20 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"go/format"
 	"html/template"
+	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/imattman/wordplay-go/pkg/word"
 )
 
-var goTmpl = `// generated from {{.Source}}
+var goTmpl = `// generated {{.Timestamp}} from {{.Source}}
 package word
 
 // DefaultWordList is the default lexicon if an external source is not loaded.
@@ -37,28 +41,38 @@ func main() {
 	t := template.Must(template.New("source").Parse(goTmpl))
 
 	// write to STDOUT if '-' is specified, otherwise standard file result
-	result := os.Stdout
+	out := os.Stdout
 	if restultFile != "-" {
-		out, err := os.Create(restultFile)
+		outfile, err := os.Create(restultFile)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		defer out.Close()
-		result = out
+		defer outfile.Close()
+		out = outfile
 	}
 
 	data := struct {
-		Source string
-		Words  []string
+		Source    string
+		Words     []string
+		Timestamp string
 	}{
 		wordFile,
 		words,
+		time.Now().Format(time.RFC3339),
 	}
 
-	err = t.Execute(result, data)
+	var src bytes.Buffer
+	err = t.Execute(&src, data)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	formatted, err := format.Source(src.Bytes())
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	io.Copy(out, bytes.NewReader(formatted))
 }
 
 func usage() {
@@ -69,7 +83,6 @@ func usage() {
 	fmt.Fprintf(os.Stderr, `
   Example:
 
-  %s -f resources/sowpods.txt -o pkg/word/wordlist.go && \
-      gofmt -w pkg/word/wordlist.go
+  %s -f resources/sowpods.txt -o pkg/word/wordlist.go
 `, app)
 }

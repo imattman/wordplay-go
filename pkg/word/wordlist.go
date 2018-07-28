@@ -1,4 +1,4 @@
-// generated from resources/sowpods.txt
+// generated 2018-07-27T23:01:14-07:00 from resources/sowpods.txt
 package word
 
 // DefaultWordList is the default lexicon if an external source is not loaded.
