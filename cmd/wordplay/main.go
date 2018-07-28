@@ -44,7 +44,7 @@ func main() {
 	scorer := word.DefaultScorer
 	scoredWords := make([]word.ScoredWord, 0, len(words))
 	for _, w := range words {
-		s := word.ScoredWord{Word: w, Score: scorer.Score(w.Multiset())}
+		s := word.ScoredWord{W: w, S: scorer.Score(w.Multiset())}
 		scoredWords = append(scoredWords, s)
 	}
 
@@ -53,7 +53,7 @@ func main() {
 	scoredWords = scoredWords[:limit]
 
 	for _, sw := range scoredWords {
-		fmt.Printf("%d\t%s\n", sw.Score, sw.Word)
+		fmt.Printf("%d\t%s\n", sw.S, sw.W)
 	}
 }
 
