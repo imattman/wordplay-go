@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"os"
@@ -24,7 +25,8 @@ func main() {
 		restultFile string
 	)
 	flag.StringVar(&wordFile, "f", "resources/sowpods.txt", "Word list file")
-	flag.StringVar(&restultFile, "o", "pkg/word/wordlist.go", "Generated Go file path")
+	flag.StringVar(&restultFile, "o", "pkg/word/wordlist.go", "Generated Go source file")
+	flag.Usage = usage
 	flag.Parse()
 
 	words, err := word.LoadFile(wordFile)
@@ -57,4 +59,17 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func usage() {
+	app := os.Args[0]
+	fmt.Fprintf(os.Stderr, "Usage of %s:\n", app)
+	flag.PrintDefaults()
+
+	fmt.Fprintf(os.Stderr, `
+  Example:
+
+  %s -f resources/sowpods.txt -o pkg/word/wordlist.go && \
+      gofmt -w pkg/word/wordlist.go
+`, app)
 }
