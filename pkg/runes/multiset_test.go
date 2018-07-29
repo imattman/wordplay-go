@@ -2,6 +2,7 @@ package runes
 
 import (
 	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -45,7 +46,31 @@ func TestMultiset_Slice(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ms := NewMultiset(tt.source)
 			if got := ms.Slice(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Multiset.Counts() = %v, want %v", got, tt.want)
+				t.Errorf("Multiset.Slice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMultiset_Unique(t *testing.T) {
+	tests := []struct {
+		name   string
+		source []rune
+		want   []rune
+	}{
+		{"zero", []rune(""), []rune{}},
+		{"one", []rune("a"), []rune{'a'}},
+		{"aaa", []rune("aaa"), []rune{'a'}},
+		{"abbccc", []rune("abbccc"), []rune{'a', 'b', 'c'}},
+		{"cabcbc", []rune("cabcbc"), []rune{'a', 'b', 'c'}},
+		{"aa bbb cccc", []rune("aa bbb cccc"), []rune{' ', 'a', 'b', 'c'}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := NewMultiset(tt.source).Unique()
+			sort.Sort(Slice(got))
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Multiset.Unique() = %v, want %v", got, tt.want)
 			}
 		})
 	}

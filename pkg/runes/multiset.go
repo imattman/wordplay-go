@@ -26,6 +26,22 @@ func (ms Multiset) Counts() map[rune]int {
 	return copy
 }
 
+// Slice returns the slice representation of the multiset.
+func (ms Multiset) Slice() []rune {
+	rs := countsToSlice(ms.counts)
+	sort.Sort(Slice(rs))
+	return rs
+}
+
+// Unique returns the unique set of runes in the multiset.
+func (ms Multiset) Unique() []rune {
+	rs := make([]rune, 0, len(ms.counts))
+	for r := range ms.counts {
+		rs = append(rs, r)
+	}
+	return rs
+}
+
 // ContainsAll checks if this multiset contains all of the same runes with at least the same counts
 // as the other supplied for comparison.
 func (ms Multiset) ContainsAll(other Multiset) bool {
@@ -51,13 +67,6 @@ func (ms Multiset) Equals(other Multiset) bool {
 		}
 	}
 	return true
-}
-
-// Slice returns the slice representation of the multiset.
-func (ms Multiset) Slice() []rune {
-	rs := countsToSlice(ms.counts)
-	sort.Sort(Slice(rs))
-	return rs
 }
 
 func (ms Multiset) String() string {
