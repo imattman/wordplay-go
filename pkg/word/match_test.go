@@ -21,11 +21,16 @@ var matchingLexWords = []string{
 func TestFullScanMatcher(t *testing.T) {
 	lex := word.NewLexicon(matchingLexWords)
 	matcher := word.NewFullScanMatcher(lex)
-
-	testCompleteWordMatcher(t, matcher)
+	testFullWordMatcher(t, matcher)
 }
 
-func testCompleteWordMatcher(t *testing.T, matcher word.Matcher) {
+func TestPartitionedMatcher(t *testing.T) {
+	lex := word.NewLexicon(matchingLexWords)
+	matcher := word.NewPartitionedMatcher(lex)
+	testFullWordMatcher(t, matcher)
+}
+
+func testFullWordMatcher(t *testing.T, matcher word.Matcher) {
 	tests := []struct {
 		rack     string
 		expected []string

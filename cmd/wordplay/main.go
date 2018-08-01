@@ -40,7 +40,7 @@ func main() {
 	lex := word.NewLexicon(wordlist)
 	chars := []rune(flag.Arg(0))
 	rack := runes.NewMultiset(chars)
-	matcher := word.NewFullScanMatcher(lex)
+	matcher := word.NewPartitionedMatcher(lex)
 	words, err := matcher.Matches(rack)
 	if err != nil {
 		fatalf("Match error: %v", err)
